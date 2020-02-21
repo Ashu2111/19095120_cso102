@@ -1,0 +1,117 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+struct node
+{
+    char cn[20];
+    char id[3];
+    struct node *link;
+};
+char r[30][30];
+int l=0,count=0;
+struct node *start=NULL;
+
+void add(char *,char*);
+void del();
+void display();
+
+int main()
+{
+  r[0][0]='\0';
+  int N,M;
+  char s[30][30],c[15][15],d[3][3],p[30],q[3];
+  int j;
+  scanf("%d",&N);
+  scanf("%d",&M);
+  for(int i=0;i<M;i++)
+  {
+      fflush(stdin);
+      gets(s[i]);
+      if(strcmp(s[i],"DEL")==0)
+        {
+             while(count>0)
+            {
+              struct node *ap=start;
+              del(&ap);
+              count--;
+            }
+        }
+     else if(strcmp(s[i],"DISPLAY")==0)
+             display();
+        else
+        {
+          for(j=4;s[i][j]!=' ';j++)
+            c[i][j-4]=s[i][j];
+            c[i][j-4]='\0';
+            j++;
+            int k=j;
+          for(;s[i][j]!='\0';j++)
+            d[i][j-k]=s[i][j];
+            d[i][j-k]='\0';
+            strcpy(p,c[i]);
+            strcpy(q,d[i]);
+            if(strcmp(q,"P")==0)
+                count++;
+           add(p,q);
+    }
+  }
+    printf("\n");
+    for(int i=0;i<l;i++)
+      {
+         printf("%s",r[i]);
+         printf("\n");
+      }
+        return 0;
+}
+void add(char *c,char *d)
+{
+    struct node *n,*temp;
+    n=(struct node*)malloc(sizeof(struct node));
+    strcpy(n->cn,c);
+    strcpy(n->id,d);
+    n->link=NULL;
+    if(start==NULL)
+        start=n;
+    else
+    {
+        temp=start;
+        while((temp->link)!=NULL)
+            temp=temp->link;
+        temp->link=n;
+    }
+}
+void display()
+{
+    if(start==NULL)
+        exit(1);
+    struct node *temp;
+    temp=start;
+    while((temp->link)!=NULL)
+         {
+            strcat(r[l],temp->cn);
+            strcat(r[l]," ");
+            temp=temp->link;
+         }
+         strcat(r[l],temp->cn);
+         strcat(r[l]," ");
+         l++;
+}
+void del(struct node **st)
+{
+    struct node *temp=*st,*prev;
+    if(temp!=NULL&&strcmp(temp->id,"P")==0)
+    {
+        *st=temp->link;
+        free(temp);
+        return;
+    }
+     while(temp!=NULL&&strcmp(temp->id,"P")!=0)
+        {
+            prev=temp;
+            temp=temp->link;
+        }
+        if(temp==NULL)
+            return;
+        prev->link=temp->link;
+        free(temp);
+}
