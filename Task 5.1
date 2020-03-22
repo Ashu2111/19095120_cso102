@@ -1,0 +1,162 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+typedef struct
+{
+    char info[3];
+    struct node *prev,*next;
+}node;
+node *front,*rear;
+void insertFront(char *item)
+{
+    node *n;
+    n=(node *)malloc(sizeof(node));
+    if(!n)
+        return;
+    strcpy(n->info,item);
+    n->prev=n->next=NULL;
+    if(front==NULL)
+    {
+        front=rear=n;
+        return;
+    }
+    n->next=front;
+    front->prev=n;
+    front=n;
+}
+void insertLast(char *item)
+{
+    node *n;
+    n=(node *)malloc(sizeof(node));
+    if(!n)
+        return;
+    strcpy(n->info,item);
+    n->next=n->prev=NULL;
+    if(rear==NULL)
+    {
+        front=rear=n;
+        return;
+    }
+    n->prev=rear;
+    rear->next=n;
+    rear=n;
+}
+char* deleteFront()
+{
+    if(front==NULL)
+        return;
+    char *data;
+    data=(char *)malloc(3);
+    strcpy(data,front->info);
+    if(front==rear)
+    {
+        free(front);
+        front=rear=NULL;
+        return data;
+    }
+    node *d;
+    d=front;
+    front=front->next;
+    front->prev=NULL;
+    free(d);
+    return data;
+}
+char* deleteLast()
+{
+    if(rear==NULL)
+        return;
+    char *data;
+    data=(char *)malloc(3);
+    strcpy(data,rear->info);
+    if(front==rear)
+    {
+        free(front);
+        front=rear=NULL;
+        return data;
+    }
+    node *d,*temp;
+    temp=rear->prev;
+    d=rear;
+    temp->next=NULL;
+    free(d);
+    rear=temp;
+    return data;
+}
+char* getFront()
+{
+    if(front==NULL)
+        return;
+    return(front->info);
+}
+char* getRear()
+{
+    if(rear==NULL)
+        return;
+    return(rear->info);
+}
+char* isEmpty(node *front)
+{
+    if(front==NULL)
+       return("Yes");
+    return("No");
+}
+char* isFull(int n)
+{
+    node *temp;
+    temp=front;
+    int count=0;
+    while(temp!=NULL)
+    {
+        temp=temp->next;
+        count++;
+    }
+    if(count==n)
+       return("Yes");
+    return("No");
+}
+int main()
+{
+    front=rear=NULL;
+    int N,M,count=0;
+    scanf("%d",&N);
+    scanf("%d",&M);
+    char o[100][30];
+    for(int i=0;i<M;i++)
+    {
+        char s[50],c[3];
+        fflush(stdin);
+        gets(s);
+        if(s[0]=='a'&&s[3]=='F')
+        {
+            int j;
+            for(j=9;s[j]!='\0';j++)
+                c[j-9]=s[j];
+                c[j-9]='\0';
+                insertFront(c);
+        }
+        else if(s[0]=='a'&&s[3]=='R')
+        {
+            int j;
+            for(j=8;s[j]!='\0';j++)
+                c[j-8]=s[j];
+                c[j-8]='\0';
+                insertLast(c);
+        }
+        else if(s[0]=='D'&&s[4]=='F')
+            strcpy(o[count++],deleteFront());
+        else if(s[0]=='D'&&s[4]=='R')
+            strcpy(o[count++],deleteLast());
+        else if(s[0]=='P'&&s[4]=='F')
+            strcpy(o[count++],getFront());
+        else if(s[0]=='P'&&s[4]=='R')
+            strcpy(o[count++],getRear());
+        else if(s[2]=='E')
+            strcpy(o[count++],isEmpty(front));
+        else if(s[2]=='F')
+            strcpy(o[count++],isFull(N));
+    }
+    printf("\n");
+    for(int i=0;i<count;i++)
+            printf("\n%s",o[i]);
+return 0;
+}
