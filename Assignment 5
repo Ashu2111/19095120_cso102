@@ -1,0 +1,156 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct node
+{
+   char c;
+   node *left,*right;
+}*root;
+int find(node *root,char x)
+{
+    if(root==NULL)
+        return 0;
+    else if(x==root->c)
+        return 1;
+    else if(x>root->c)
+        return(find(root->right,x));
+    else if(x<root->c)
+        return(find(root->left,x));
+    return 0;
+}
+void Declare(node **root,char x)
+{
+    if(find(*root,x)==1)
+    {
+        cout<<"It is already present in bst!!\n";
+        return;
+    }
+    node *n=new node;
+    n->c=x;
+    n->left=n->right=NULL;
+    if(*root==NULL)
+    {
+       *root=n;
+       return;
+    }
+    node *temp=*root;
+    while(temp!=NULL)
+    {
+        if(x>temp->c)
+        {
+            if(temp->right==NULL)
+             {
+                temp->right=n;
+                return;
+             }
+             temp=temp->right;
+        }
+        else
+        {
+           if(temp->left==NULL)
+           {
+               temp->left=n;
+               return;
+           }
+           temp=temp->left;
+        }
+    }
+}
+void preorder(node *root)
+{
+    if(root)
+    {
+        cout<<root->c<<" ";
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+void inorder(node *root)
+{
+    if(root)
+    {
+        inorder(root->left);
+        cout<<root->c<<" ";
+        inorder(root->right);
+    }
+}
+void postorder(node *root)
+{
+    if(root)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        cout<<root->c<<" ";
+    }
+}
+node *findmin(node *root)
+{
+    if(root==NULL)
+        return root;
+    else if(root->left==NULL)
+        return root;
+    else
+        return(findmin(root->left));
+}
+node *Delete(node *root,char x)
+{
+    if(root==NULL)
+        return root;
+    else if(x>root->c)
+        root->right=Delete(root->right,x);
+    else if(x<root->c)
+        root->left=Delete(root->left,x);
+    else
+    {
+        if(root->right==NULL&&root->left==NULL)
+        {
+            delete(root);
+            root=NULL;
+        }
+        else if(root->right==NULL)
+        {
+            node *temp=root;
+            root=root->left;
+            delete(temp);
+        }
+        else if(root->left==NULL)
+        {
+            node *temp=root;
+            root=root->right;
+            delete(temp);
+        }
+        else
+        {
+            node *temp=findmin(root->right);
+            root->c=temp->c;
+            root->right=Delete(root->right,temp->c);
+        }
+        return root;
+    }
+}
+int main()
+{
+    root=NULL;
+    int n,i;
+    cin>>n;
+    cin>>ws;
+    for(i=0;i<n;i++)
+    {
+        string s;
+        getline(cin,s);
+        if(s.substr(0,6)=="INSERT")
+            Declare(&root,s[7]);
+        else if(s.substr(0,3)=="DEL")
+            Delete(root,s[4]);
+        else if(s=="DISPLAY")
+        {
+           cout<<"Preorder:";
+           preorder(root);
+           cout<<"\nPostorder:";
+           postorder(root);
+           cout<<"\nInorder:";
+           inorder(root);
+           cout<<endl;
+        }
+    }
+    return 0;
+}
